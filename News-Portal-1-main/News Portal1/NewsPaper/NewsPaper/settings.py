@@ -170,3 +170,142 @@ DEFAULT_FROM_EMAIL = 'enickeeff.max07@yandex.ru'
 
 APSCHEDULER_DATETIME_FORMAT = "N j, Y, f:s a"
 APSCHEDULER_RUN_NOW_TIMEOUT = 25
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'),
+    }
+}
+
+ADMINS = [('Maksim', 'enickeeff.max07@yandex.ru')]
+
+SERVER_EMAIL = EMAIL_HOST_USER
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'style': '{',
+    # средства форматирования
+    'formatters': {
+        # вывод сообщений в консоль
+        'cnsl_debug': {
+            'format': '%(asctime)s %(levelname)s %(message)s',
+            'datefmt': '%d.%m.%Y %H-%M-%S',
+        },
+        'cnsl_warning': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s',
+            'datefmt': '%d.%m.%Y %H-%M-%S',
+        },
+        'cnsl_error_critical': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s',
+            'datefmt': '%d.%m.%Y %H-%M-%S',
+        },
+        # вывод сообщений в файлы
+        'general': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s',
+            'datefmt': '%d.%m.%Y %H-%M-%S',
+        },
+        'errors': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s %(exc_info)s',
+            'datefmt': '%d.%m.%Y %H-%M-%S',
+        },
+        'security': {
+            'format': '%(asctime)s %(levelname)s %(module)s %(message)s',
+            'datefmt': '%d.%m.%Y %H-%M-%S',
+        },
+        # на почту
+        'email': {
+            'format': '%(asctime)s %(levelname)s %(message)s %(pathname)s',
+            'datefmt': '%d.%m.%Y %H-%M-%S',
+        },
+    },
+    # фильтры
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+    },
+    # обработчики
+    'handlers': {
+        'console_debug': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true',],
+            'class': 'logging.StreamHandler',
+            'formatter': 'cnsl_debug',
+        },
+        'console_warning': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true', ],
+            'class': 'logging.StreamHandler',
+            'formatter': 'cnsl_warning',
+        },
+        'console_error': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true', ],
+            'class': 'logging.StreamHandler',
+            'formatter': 'cnsl_error_critical',
+        },
+        'general': {
+            'level': 'INFO',
+            'filters': ['require_debug_false', ],
+            'class': 'logging.FileHandler',
+            'filename': 'logs/general.log',
+            'formatter': 'general',
+        },
+        'errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/errors.log',
+            'formatter': 'errors',
+        },
+        'security': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'logs/security.log',
+            'formatter': 'security',
+        },
+        'email': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false', ],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'email',
+        },
+    },
+    # регистраторы
+    'loggers': {
+        'django': {
+            'handlers': ['console_debug', 'console_warning', 'console_error', 'general', ],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['errors', 'email', ],
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['errors', 'email', ],
+            'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['errors', ],
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['errors', ],
+            'propagate': True
+        },
+        'django.security': {
+            'handlers': ['security', ],
+            'propagate': False,
+        },
+    },
+}

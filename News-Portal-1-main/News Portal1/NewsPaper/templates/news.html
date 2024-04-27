@@ -10,6 +10,11 @@ News
    <h1>Все новости</h1>
    <h3>{{ news|length }}</h3>
 
+    {% load cache %}
+    {% cache 600 header %}
+        {% block header %}
+        {% endblock header %}
+    {% endcache %}
    <hr>
 
     {% if perms.simpleapp.add_new %}

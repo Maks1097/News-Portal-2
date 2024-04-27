@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 from django.urls import reverse
 from django.contrib.auth.models import User
+from django.core.cache import cache
 
 
 class New(models.Model):
@@ -35,6 +36,10 @@ class New(models.Model):
 
     def get_absolute_url(self):
         return reverse('new_detail', args=[str(self.id)])
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        cache.delete(f'new-{self.pk}')
 
 class Category(models.Model):
     name = models.CharField(max_length=100, unique=True)
